@@ -1,0 +1,5 @@
+[gerrit]
+host=review.blissroms.com
+port=29418
+project=platform_bootable_recovery.git
+defaultbranch=o8.0
