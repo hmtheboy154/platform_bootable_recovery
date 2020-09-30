@@ -44,6 +44,7 @@ class Device {
     NO_ACTION = 0,
     REBOOT = 1,
     APPLY_SDCARD = 2,
+    APPLY_UDISK = 3,
     // APPLY_CACHE was 3.
     APPLY_ADB_SIDELOAD = 4,
     WIPE_DATA = 5,

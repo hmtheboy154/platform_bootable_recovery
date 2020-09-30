@@ -456,6 +456,7 @@ static Device::BuiltinAction PromptAndWait(Device* device, InstallResult status)
 
       case Device::APPLY_ADB_SIDELOAD:
       case Device::APPLY_SDCARD:
+      case Device::APPLY_UDISK:
       case Device::ENTER_RESCUE: {
         save_current_log = true;
 
@@ -472,10 +473,19 @@ static Device::BuiltinAction PromptAndWait(Device* device, InstallResult status)
           status = ApplyFromAdb(device, false /* rescue_mode */, &reboot_action);
         } else {
           adb = false;
-          status = ApplyFromSdcard(device);
+          if (chosen_action == Device::APPLY_SDCARD)
+            status = ApplyFromSdcard(device);
+          else if (chosen_action == Device::APPLY_UDISK)
+            status = ApplyFromUdisk(device);
         }
 
-        ui->Print("\nInstall from %s completed with status %d.\n", adb ? "ADB" : "SD card", status);
+        if (chosen_action == Device::APPLY_ADB_SIDELOAD)
+          ui->Print("\nInstall from ADB completed with status %d.\n", status);
+        else if (chosen_action == Device::APPLY_SDCARD)
+          ui->Print("\nInstall from SD card completed with status %d.\n", status);
+        else if (chosen_action == Device::APPLY_UDISK)
+          ui->Print("\nInstall from Udisk completed with status %d.\n", status);
+
         if (status == INSTALL_REBOOT) {
           return reboot_action;
         }

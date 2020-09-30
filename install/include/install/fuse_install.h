@@ -28,3 +28,4 @@
 InstallResult InstallWithFuseFromPath(std::string_view path, Device* device);
 
 InstallResult ApplyFromSdcard(Device* device);
+InstallResult ApplyFromUdisk(Device* device);
