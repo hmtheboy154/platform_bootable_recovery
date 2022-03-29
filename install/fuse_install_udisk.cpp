@@ -153,7 +153,7 @@ static bool StartInstallPackageFuse(std::string_view path) {
   return run_fuse_sideload(std::move(fuse_data_provider)) == 0;
 }
 
-static InstallResult InstallWithFuseFromPathUdisk(std::string_view path, RecoveryUI* ui) {
+static InstallResult InstallWithFuseFromPathUdisk(std::string_view path, Device* device) {
   // We used to use fuse in a thread as opposed to a process. Since accessing
   // through fuse involves going from kernel to userspace to kernel, it leads
   // to deadlock when a page fault occurs. (Bug: 26313124)
@@ -189,9 +189,9 @@ static InstallResult InstallWithFuseFromPathUdisk(std::string_view path, Recover
     }
     auto package =
         Package::CreateFilePackage(FUSE_SIDELOAD_HOST_PATHNAME,
-                                   std::bind(&RecoveryUI::SetProgress, ui, std::placeholders::_1));
+                                   std::bind(&RecoveryUI::SetProgress, device->GetUI(), std::placeholders::_1));
     result =
-        InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0 /* retry_count */, ui);
+        InstallPackage(package.get(), FUSE_SIDELOAD_HOST_PATHNAME, false, 0 /* retry_count */, device);
     break;
   }
 
@@ -243,7 +243,7 @@ InstallResult ApplyFromUdisk(Device* device) {
   ui->Print("\n-- Install %s ...\n", path.c_str());
   SetUdiskUpdateBootloaderMessage();
 
-  auto result = InstallWithFuseFromPathUdisk(path, ui);
+  auto result = InstallWithFuseFromPathUdisk(path, device);
   ensure_path_unmounted(udisk_root);
   return result;
 }
